@@ -1,9 +1,8 @@
-
-
 // ==UserScript==
 // @name                Get Rank in Taobao
 // @name:zh-CN          获取淘宝关键字搜索排名
-// @description         Get Rank in Taobao
+// @description         Get product search rank in taobao.com
+// @description:zh-CN   获取淘宝商品的关键字搜索排名
 
 // @author              lib
 // @namespace           https://lib.org

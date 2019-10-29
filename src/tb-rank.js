@@ -2,22 +2,21 @@
 
 // ==UserScript==
 // @name                Get Rank in Taobao
-// @name:zh-CN          Get Rank in Taobao
+// @name:zh-CN          获取淘宝关键字搜索排名
 // @description         Get Rank in Taobao
 
 // @author              lib
 // @namespace           https://lib.org
 // @homepageURL         https://lib.org/tb-rank
 // @supportURL          https://github.com/ace1573/tb-rank
-// @license             GPL-3.0
+// @license             MIT
 
 // @include             /^https?://s.taobao.com/search\?.+/
-// @include             /^https?://list.tmall.com/search_product.htm\?.+/
 // @grant               none
 // @run-at              document-idle
 
-// @date                28/10/2019
-// @modified            28/10/2019
+// @date                29/10/2019
+// @modified            29/10/2019
 // @version             0.0.1
 // ==/UserScript==
 
@@ -25,15 +24,14 @@
 ! function() {
   "use strict";
 
-  var href = location.search;
-
-  // '#mainsrp-itemlist .pic-box-inner .pic a'
-
-
+  //插入界面
   document.body.insertAdjacentHTML('beforeend', `
-  
-  <div style="position: fixed; background:#FFF; border:1px solid #EFEFEF; padding: 20px; top: 10%; right: 5%;">
-    <textarea id="_rnk_products" rows="5" cols="30" placeholder="id name" value="564877445605 私家云"></textarea>
+  <div style="position: fixed; background:#FFF; border:2px solid #EFEFEF; border-radius: 5px; padding: 20px; top: 5%; right: 3%;">
+    <textarea id="_rnk_products" rows="5" cols="30" placeholder="商品id[空格]商品名[回车]...">
+605123552435 原酿
+605804603913 生姜
+605124940227 黑糯米
+    </textarea>
     <br>
     <button id="_rnk_start" style="padding: .2em 2em;">start</button>
     <br><br>
@@ -50,6 +48,7 @@
 }();
 
 
+//返回的当前页数
 async function getCurrPage(){
 
   while(!document.querySelector('.m-page li.active span.num')){
@@ -61,7 +60,8 @@ async function getCurrPage(){
   console.log('curr page', page)
   return parseInt(page)
 }
-function getDatas(){//取初始化数据
+//取初始化数据
+function getDatas(){
   if(window.__rnk_datas) return window.__rnk_datas
 
   //初始化
@@ -69,13 +69,16 @@ function getDatas(){//取初始化数据
   result.products = getProductFromInput()
   return result
 }
+//解析输入
 function getProductFromInput(){
   let products = {}
   try {
     let _rnk_products = document.getElementById('_rnk_products').value
     for(let item of _rnk_products.split('\n')){
       let arr = item.split(/\s+/g)
-      products[arr[0].trim()] = arr[1].trim()
+      let key = arr[0].trim()
+      let val = arr[1].trim()
+      if(key) products[key] = val
     }
   } catch (error) {
     alert(`输入格式错误`)
@@ -88,18 +91,18 @@ function getProductFromInput(){
 //.m-page li.active span.num //当前页
 //.m-page li.next a 下一页
 
-
+//遍历商品获取排名
 async function getRanks(){
   let currPage = await getCurrPage()
 
-  //产品
+  //产品 排名
   let { products, ranks } = getDatas()
 
   console.log(`products`, products)
 
   let list = document.querySelectorAll('#mainsrp-itemlist .pic-box-inner .pic a')
   
-  let invalidCount = 0//无用的
+  let invalidCount = 0//无效商品数
   for(let i=0; i<list.length; i++){
     let item = list[i]
     if(!item.href){
@@ -112,20 +115,24 @@ async function getRanks(){
       continue
     }
     if(products[id]){
-      ranks[id] = (i + 1 - invalidCount)
+      ranks[id] = { page: currPage, rank: (i + 1 - invalidCount) }
     }
   }
 
   
-  let result = [], findCount = 0
-  for(let key in ranks){
-    result.push(`${products[key]}: 第${currPage}页 第${ranks[key]}条`)
-    findCount++
+  //是否搜索完毕
+  let result = [], finished = true
+  for(let key in products){
+    if(!ranks[key]){
+      finished = false
+      continue
+    }
+    result.push(`${products[key]}: 第${ranks[key].page}页 第${ranks[key].rank}条`)
   }
   
   let nextPageNode = document.querySelector('.m-page li.next a')
-  if(findCount == products.length || currPage > 10 || !nextPageNode){
-    document.getElementById('_rnk_result').innerHTML = result.join('\n')
+  if(finished || currPage > 10 || !nextPageNode){
+    document.getElementById('_rnk_result').innerHTML = result.join('<br>')
     alert('搜索完毕 查看--->')
   }else{//保存起来
     console.log('curr result', result)
@@ -137,13 +144,13 @@ async function getRanks(){
   }
 }
 
-
+//睡眠
 function _sleep(mills){
   return new Promise((resolve,reject)=>{
     setTimeout(resolve, mills)
   })
 }
-
+//获取url参数
 function _getUrlParam(name, url) {
   if (!url) url = window.location.href;
   name = name.replace(/[\[\]]/g, '\\$&');

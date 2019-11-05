@@ -4,7 +4,7 @@
 
 // @author              lib
 // @namespace           https://lib.org
-// @homepageURL         https://lib.org/tb-rank
+// @homepageURL         https://greasyfork.org/zh-CN/scripts/391705-get-rank-in-taobao
 // @supportURL          https://github.com/ace1573/tb-rank
 // @license             MIT
 
@@ -14,7 +14,7 @@
 
 // @date                29/10/2019
 // @modified            29/10/2019
-// @version             0.0.1
+// @version             0.0.2
 // ==/UserScript==
 
 

@@ -106,7 +106,8 @@ async function getRanks(){
       invalidCount++
       continue
     }
-    let id = _getUrlParam('id', item.href)
+    // let id = _getUrlParam('id', item.href) 
+    let id = item.getAttribute('data-nid')
     if(!id){
       invalidCount++
       continue

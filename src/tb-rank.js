@@ -14,7 +14,7 @@
 
 // @date                29/10/2019
 // @modified            29/10/2019
-// @version             0.0.2
+// @version             0.0.3
 // ==/UserScript==
 
 
@@ -129,7 +129,8 @@ async function getRanks(){
   }
   
   let nextPageNode = document.querySelector('.m-page li.next a')
-  if(finished || currPage > 10 || !nextPageNode){
+  if(finished || currPage > 100 || !nextPageNode){
+    if(!result.length) return alert(`搜索完毕 没有找到结果`)
     document.getElementById('_rnk_result').innerHTML = result.join('<br>')
     alert('搜索完毕 查看--->')
   }else{//保存起来

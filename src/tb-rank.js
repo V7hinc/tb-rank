@@ -13,8 +13,8 @@
 // @run-at              document-idle
 
 // @date                29/10/2019
-// @modified            29/10/2019
-// @version             0.0.3
+// @modified            12/11/2019
+// @version             0.0.4
 // ==/UserScript==
 
 
@@ -136,6 +136,8 @@ async function getRanks(){
   }else{//保存起来
     console.log('curr result', result)
     console.log('to next page')
+
+    await _sleep(1000)//延时
     nextPageNode.click()//下一页
 
     await _sleep(500)

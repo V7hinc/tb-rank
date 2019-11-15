@@ -14,7 +14,7 @@
 
 // @date                29/10/2019
 // @modified            12/11/2019
-// @version             0.0.4
+// @version             0.0.5
 // ==/UserScript==
 
 
@@ -106,7 +106,6 @@ async function getRanks(){
       invalidCount++
       continue
     }
-    // let id = _getUrlParam('id', item.href) 
     let id = item.getAttribute('data-nid')
     if(!id){
       invalidCount++
@@ -128,16 +127,18 @@ async function getRanks(){
     result.push(`${products[key]}: 第${ranks[key].page}页 第${ranks[key].rank}条`)
   }
   
+  //显示结果
+  document.getElementById('_rnk_result').innerHTML = result.join('<br>')
+
   let nextPageNode = document.querySelector('.m-page li.next a')
   if(finished || currPage > 100 || !nextPageNode){
     if(!result.length) return alert(`搜索完毕 没有找到结果`)
-    document.getElementById('_rnk_result').innerHTML = result.join('<br>')
     alert('搜索完毕 查看--->')
   }else{//保存起来
     console.log('curr result', result)
     console.log('to next page')
 
-    await _sleep(1000)//延时
+    await _sleep(800)//延时
     nextPageNode.click()//下一页
 
     await _sleep(500)

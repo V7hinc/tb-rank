@@ -14,7 +14,7 @@
 
 // @date                29/10/2019
 // @modified            12/11/2019
-// @version             0.0.5
+// @version             0.0.6
 // ==/UserScript==
 
 
@@ -50,6 +50,11 @@ async function getCurrPage(){
 
   while(!document.querySelector('.m-page li.active span.num')){
     await _sleep(100)
+  }
+
+  //访问验证
+  while(document.querySelector(".sufei-tb-dialog:not(.sufei-tb-dialog-hidden)")){
+    await _sleep(200)
   }
 
   let node = document.querySelector('.m-page li.active span.num')
